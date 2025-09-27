@@ -12,6 +12,7 @@ static class Util {
    public static void DumpAll (string filename) {
       foreach (var section in ExtractSections (filename)) {
          section.Dump ();
+         Console.WriteLine ();
       }
    }
 
@@ -89,6 +90,7 @@ static class Util {
    }   
 }
 readonly record struct DxfGroup (int Code, string Value) {
+   public override string ToString () => $"{Code}:{Value}";
    public bool IsStartSection => Code == 0 && Value == "SECTION";
    public bool IsEndSection => Code == 0 && Value == "ENDSEC";
    public bool IsEof => Code == 0 && Value == "EOF";

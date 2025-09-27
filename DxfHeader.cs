@@ -2,7 +2,7 @@
 class HeaderSection : IDxfSection {
    public HeaderSection (ReadOnlySpan<DxfGroup> groups) {
       Name = "HEADER";
-      // Collect all the HEADER value groups (There could be multi-valued group value)
+      // Collect all the HEADER value groups (Group value could be multi-valued)
       var itr = groups.GetEnumerator ();
       Util.Check (itr.MoveNext (), "Expect HEADER variable name");
       var g = itr.Current;
@@ -15,15 +15,13 @@ class HeaderSection : IDxfSection {
          g = itr.Current;
          if (g.Code == 9) {
             strs.Clear ();
-            foreach (var group in hGroups) {
-               strs.Add ($"{group.Code}:{group.Value}");
-            }
+            foreach (var group in hGroups)
+               strs.Add (group.ToString ());
             mKVs.Add (hName, string.Join ("|", strs));
             hName = g.Value;
             hGroups.Clear ();
-         } else {
+         } else 
             hGroups.Add (g);
-         }
          if (!itr.MoveNext ()) break;
       }
    }
