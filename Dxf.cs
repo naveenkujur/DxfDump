@@ -4,7 +4,7 @@ static class Util {
       var itr = File.ReadLines (filename).GetEnumerator ();
       while (itr.MoveNext ()) {
          int groupCode = int.Parse (itr.Current);
-         MoveItr (itr);
+         MustMove (itr);
          yield return new DxfGroup (groupCode, itr.Current.Trim ());
       }
    }
@@ -23,20 +23,19 @@ static class Util {
          var g = itr.Current;
          if (g.IsEof) yield break;
          if (!g.IsStartSection) continue;
-         MoveItr (itr);
+         MustMove (itr);
          g = itr.Current;
          Check (g.Code == 2, "Expect SECTION name");
          var sectionName = g.Value;
-         MoveItr (itr);
+         MustMove (itr);
          groups.Clear ();
          while (!itr.Current.IsEndSection) {
             groups.Add (itr.Current);
-            MoveItr (itr);
+            MustMove (itr);
          }
          yield return CreateSection (sectionName, [.. groups]);
       }
       Check (false, "Corrupt DXF file");
-
    }
 
    public static void DumpSectionNames (string filename) {
@@ -45,13 +44,13 @@ static class Util {
          var g = itr.Current;
          if (g.IsEof) return;
          if (!g.IsStartSection) continue;
-         MoveItr (itr);
+         MustMove (itr);
          g = itr.Current;
          Check (g.Code == 2, "Expect SECTION name");
          Console.WriteLine (g.Value);
-         MoveItr (itr);
+         MustMove (itr);
          while (!itr.Current.IsEndSection) 
-            MoveItr (itr);
+            MustMove (itr);
       }
       Check (false, "Corrupt DXF file");
    }
@@ -81,14 +80,15 @@ static class Util {
       };
    }
 
-   public static void MoveItr<T> (IEnumerator<T> itr) {
-      if (!itr.MoveNext()) throw new FileLoadException ();
-   }
+   public static bool MustMove<T> (IEnumerator<T> itr) 
+      => itr.MoveNext () ? true : throw new FileLoadException ("Itr failed to move!");
 
    public static void Check (bool predicate, string message) {
       if (!predicate) throw new FileLoadException (message);
    }   
 }
+
+/// <summary>DXF group is simply code + value pair</summary>
 readonly record struct DxfGroup (int Code, string Value) {
    public override string ToString () => $"{Code}:{Value}";
    public bool IsStartSection => Code == 0 && Value == "SECTION";
