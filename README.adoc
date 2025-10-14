@@ -1,0 +1,6 @@
+= About
+
+Useful links::
+. https://www.fileformat.info/format/dxf/spec/9c99326db53b44a8a3abd9fbb336b62a/view.htm
+. https://www.autodesk.com/support/technical/article/caas/sfdcarticles/sfdcarticles/drawing-version-codes-for-autocad.html
+. https://ezdxf.readthedocs.io/en/stable/dxfinternals/fileencoding.html
