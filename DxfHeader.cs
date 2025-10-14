@@ -2,9 +2,10 @@
 class HeaderSection : IDxfSection {
    public HeaderSection (ReadOnlySpan<DxfGroup> groups) {
       Name = "HEADER";
+      if (groups.Length == 0) return; // Empty HEADER section!
       // Collect all the HEADER value groups (Group value could be multi-valued)
       var itr = groups.GetEnumerator ();
-      Util.Check (itr.MoveNext (), "Expect HEADER variable name");
+      Util.Check (itr.MoveNext (), "Expect group code");
       var g = itr.Current;
       Util.Check (g.Code == 9, "Ensure HEADER variable name");
       var hName = g.Value;
@@ -27,6 +28,8 @@ class HeaderSection : IDxfSection {
    }
 
    public string Name { get; private set; }
+
+   public IReadOnlyDictionary<string, string> KVs => mKVs;
 
    public void Dump () {
       Console.WriteLine ($"SECTION {Name}");
