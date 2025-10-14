@@ -74,9 +74,7 @@ static class Util {
          "TABLES" => new TablesSection (groups),
          "ENTITIES" => new EntitiesSection (groups),
          "BLOCKS" => new BlocksSection (groups),
-         "CLASSES" => new ClassesSection (groups),
-         "OBJECTS" => new ObjectsSection (groups),
-         _ => throw new IndexOutOfRangeException ($"Unknown SECTION name {name}"),
+         _ => new IgnoredSection (name, groups),
       };
    }
 
@@ -99,4 +97,15 @@ readonly record struct DxfGroup (int Code, string Value) {
 interface IDxfSection {
    string Name { get; }
    void Dump ();
+}
+
+/// <summary>DXF "IGNORED" section</summary>
+class IgnoredSection : IDxfSection {
+   public IgnoredSection (string name, ReadOnlySpan<DxfGroup> groups) => Name = name;
+   
+   public string Name { get; private set; }
+
+   public void Dump () {
+      Console.WriteLine ($"SECTION {Name}");
+   }
 }
