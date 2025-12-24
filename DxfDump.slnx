@@ -1,3 +1,3 @@
 <Solution>
-  <Project Path="DxfDump.csproj" />
+  <Project Path="DxfDump/DxfDump.csproj" />
 </Solution>
