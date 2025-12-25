@@ -1,8 +1,13 @@
 ﻿// DXF encoding study
+using System.Text;
+
 namespace DxfEncoding;
 
-class Encoding {
+class DxfDecoder {
    public static void Playground () {
+      Console.OutputEncoding = Encoding.UTF8;
+      //CheckEncoding ("X:/TData");
+      //CheckEncoding ("A:/TData");
       CheckEncoding ("N:/TData");
    }
 
@@ -10,7 +15,20 @@ class Encoding {
       foreach (var fn in Directory.GetFiles (dirPath, "*.dxf", SearchOption.AllDirectories)) {
          Console.ForegroundColor = ConsoleColor.Yellow;
          Console.WriteLine (fn);
+
+         // Output preferred encoding info, if any
+         try {
+            Dxf.ExtractEncoding (fn, out string acadVer, out string acadEncoding);
+            if (acadVer.Length > 0 || acadEncoding.Length > 0) {
+               Console.ForegroundColor = ConsoleColor.White;
+               Console.WriteLine ("acadver: {0}, dwgcodepage: {1}", acadVer, acadEncoding);
+            }
+         } catch (FormatException) { // File: X:\TData\IO\DXF\mac.dxf [uses CRCRLF new-line encoding format]
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine ("FORMAT ERROR : Possibly corrupt file");
+         }
          Console.ResetColor ();
+
          DumpNonAscii (fn);
       }
    }
