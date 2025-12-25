@@ -2,6 +2,6 @@
 
 class Program {
    static void Main (string[] args) {
-      Encoding.Playground ();
+      DxfDecoder.Playground ();
    }
 }
